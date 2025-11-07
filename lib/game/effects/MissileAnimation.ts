@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { getGameWidth, getGameHeight } from '../utils/constants';
+import { getAssetPath } from '@/lib/utils/assetPath';
 
 /**
  * 导弹动画效果
@@ -29,7 +30,7 @@ export class MissileAnimation {
 
     try {
       // 加载导弹图片
-      const texture = await PIXI.Assets.load('/assets/missile.png');
+      const texture = await PIXI.Assets.load(getAssetPath('/assets/missile.png'));
       
       this.sprite = new PIXI.Sprite(texture);
       this.sprite.anchor.set(0.5);

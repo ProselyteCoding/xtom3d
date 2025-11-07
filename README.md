@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 雷霆战机 (Thunder Fighter) 🚀
 
-## Getting Started
+一款结合答题机制的太空射击游戏，使用 Next.js 和 PixiJS 开发。
 
-First, run the development server:
+## 🎮 在线体验
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**立即开始游戏：** https://weixhne.github.io/xtom3d/
+
+## 🎯 游戏机制
+
+### 基础玩法
+
+- **操作方式**：WASD/方向键控制飞移动
+- **射击系统**：自动发射子弹攻击敌机
+- **生命系统**：3条生命，碰撞敌机或敌机子弹会失去生命
+- **护盾系统**：拾取护盾道具可阻止受到一次伤害
+
+### 答题机制
+
+- 游戏中会触发答题事件
+- **答对奖励**：
+  - 🔥 复活（死亡时触发，生命+1，一局游戏中只能触发一次）
+  - 🛡️ 护盾（获得临时无敌）
+  - 🚀 东风5C导弹（清屏大招）
+- **答错惩罚**：不能获得相应答题奖励
+- **超时惩罚**：未在限定时间内作答视为答错
+
+### 道具系统
+- **护盾（蓝色）**：提供临时无敌保护
+- **火力提升（红色）**：增强子弹威力
+- **神秘道具（红色/黄色）**：触发答题获得随机奖励
+
+### 复活机制
+- 生命耗尽时可选择观看答题复活
+- 答对即可满血复活继续游戏
+- 答错则游戏结束
+
+## 🛠️ 项目技术
+
+### 核心技术栈
+- **Next.js 16** - React 框架，支持静态导出
+- **TypeScript** - 类型安全的 JavaScript
+- **PixiJS v8** - 高性能 2D WebGL 渲染引擎
+- **Zustand** - 轻量级状态管理
+- **Tailwind CSS** - 实用优先的 CSS 框架
+- **Sass** - CSS 预处理器
+
+### 游戏架构
+```
+lib/game/
+├── managers/        # 游戏管理器
+│   ├── GameManager      - 游戏主控制器
+│   ├── EnemyManager     - 敌机生成与管理
+│   ├── BulletManager    - 子弹系统
+│   ├── CollisionManager - 碰撞检测
+│   ├── PowerUpManager   - 道具系统
+│   └── AudioManager     - 音效管理
+├── entities/        # 游戏实体
+│   ├── Player           - 玩家飞机
+│   ├── Enemy            - 敌机
+│   ├── Bullet           - 子弹
+│   └── PowerUp          - 道具
+├── effects/         # 视觉效果
+│   ├── ParticleSystem   - 粒子系统
+│   └── MissileAnimation - 导弹动画
+└── Background       - 背景星空
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 特色功能
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **静态站点生成**：使用 Next.js 静态导出，部署到 GitHub Pages
+- **响应式设计**：自适应不同屏幕尺寸
+- **性能优化**：
+  - Turbopack 构建优化
+  - 对象池模式减少 GC
+  - 高效的碰撞检测算法
+- **程序化音效**：无需音频文件，使用 Web Audio API 实时生成
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 状态管理
 
-## Learn More
+- **gameStore**：游戏核心状态（分数、生命、道具）
+- **uiStore**：UI 状态（菜单、弹窗、答题）
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 项目结构
+```
+xtom3d/
+├── app/                 # Next.js 应用目录
+│   ├── page.tsx        # 游戏主页面
+│   └── layout.tsx      # 应用布局
+├── lib/                # 游戏逻辑
+│   ├── game/           # 游戏核心代码
+│   ├── questions/      # 题库（可扩展）
+│   └── store/          # 状态管理
+├── public/             # 静态资源
+│   └── assets/         # 游戏素材
+└── styles/             # 全局样式
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 游戏特色
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+寓教于乐：主题答题系统
+- ⚡ **流畅的游戏体验**：60 FPS 稳定帧率
+- 🎯 **多样化的敌机类型**：不同血量和难度
+- 💫 **精美的粒子效果**：爆炸、拾取特效
+- 📱 **响应式设计**：支持不同设备访问
+- 🚀 **分数记录**：记录当前用户的最高分
+- 

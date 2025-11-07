@@ -11,6 +11,7 @@ import { AudioManager } from './AudioManager';
 import { PowerUpManager } from './PowerUpManager';
 import { MissileAnimation } from '../effects/MissileAnimation';
 import { getGameWidth, getGameHeight } from '../utils/constants';
+import { getAssetPath } from '@/lib/utils/assetPath';
 
 /**
  * GameManager 类
@@ -65,7 +66,7 @@ export class GameManager {
     // 预加载所有资源
     try {
       const [playerTexture] = await Promise.all([
-        PIXI.Assets.load('/assets/my-plane.jpg'),
+        PIXI.Assets.load(getAssetPath('/assets/my-plane.jpg')),
         // 预加载敌机纹理
         import('../entities/Enemy').then(module => module.Enemy.loadTextures()),
       ]);
@@ -145,7 +146,10 @@ export class GameManager {
   /**
    * 使用炸弹
    */
-  private useBomb(): void {
+  /**
+   * 使用炸弹（东风5C导弹）
+   */
+  public useBomb(): void {
     const success = useGameStore.getState().useBomb();
     if (success && this.enemyManager && this.explosionManager) {
       // 播放导弹动画

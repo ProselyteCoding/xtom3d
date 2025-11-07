@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { ENEMY_TYPES } from '../utils/constants';
 import { EnemyBullet } from './EnemyBullet';
+import { getAssetPath } from '@/lib/utils/assetPath';
 
 export type EnemyType = 'SMALL' | 'MEDIUM' | 'LARGE';
 
@@ -34,9 +35,9 @@ export class Enemy {
     if (Enemy.textures.size === 0) {
       try {
         const [texture1, texture2, texture3] = await Promise.all([
-          PIXI.Assets.load('/assets/enemy-plane1.jpg'),
-          PIXI.Assets.load('/assets/enemy-plane2.jpg'),
-          PIXI.Assets.load('/assets/enemy-plane3.jpg'),
+          PIXI.Assets.load(getAssetPath('/assets/enemy-plane1.jpg')),
+          PIXI.Assets.load(getAssetPath('/assets/enemy-plane2.jpg')),
+          PIXI.Assets.load(getAssetPath('/assets/enemy-plane3.jpg')),
         ]);
         Enemy.textures.set('SMALL', texture1);
         Enemy.textures.set('MEDIUM', texture2);

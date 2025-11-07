@@ -9,6 +9,7 @@ import { AudioManager } from '@/lib/game/managers/AudioManager';
 import { gameDimensions } from '@/lib/game/utils/constants';
 import GameOverModal from '@/components/GameOverModal';
 import styles from './page.module.scss';
+import { getAssetPath } from '@/lib/utils/assetPath';
 
 // PixiJS 相关导入
 import * as PIXI from 'pixi.js';
@@ -155,7 +156,7 @@ export default function Home() {
       case 'mysteryBlue':
         return { icon: '🛡️', text: '护盾', description: '答对获得护盾保护', isImage: false };
       case 'mysteryRed':
-        return { icon: '/assets/missile.png', text: '东风5C', description: '答对获得1枚东风5C导弹', isImage: true };
+        return { icon: getAssetPath('/assets/missile.png'), text: '东风5C', description: '答对获得1枚东风5C导弹', isImage: true };
       case 'mysteryYellow':
         return { icon: '🎁', text: '随机道具', description: '答对随机获得护盾或东风5C', isImage: false };
       case 'revive':
@@ -350,7 +351,7 @@ export default function Home() {
             {powerUps.bombs > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <img 
-                  src="/assets/missile.png" 
+                  src={getAssetPath('/assets/missile.png')}
                   alt="东风5C" 
                   style={{ width: '20px', height: '20px', imageRendering: 'pixelated' }}
                 />
@@ -358,6 +359,23 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* 导弹触发按钮（移动端） */}
+      {gameStarted && powerUps.bombs > 0 && (
+        <div 
+          className={styles.missileButton}
+          onClick={() => {
+            if (gameManagerRef.current && powerUps.bombs > 0) {
+              gameManagerRef.current.useBomb();
+            }
+          }}
+        >
+          <img 
+            src={getAssetPath('/assets/missile.png')}
+            alt="发射导弹" 
+          />
         </div>
       )}
 

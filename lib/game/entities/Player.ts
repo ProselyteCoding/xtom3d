@@ -15,9 +15,19 @@ export class Player {
   private container: PIXI.Container;
   private keyDownHandler!: (e: KeyboardEvent) => void;
   private keyUpHandler!: (e: KeyboardEvent) => void;
+  private touchStartHandler!: (e: TouchEvent) => void;
+  private touchMoveHandler!: (e: TouchEvent) => void;
+  private touchEndHandler!: (e: TouchEvent) => void;
+  private isTouching = false;
+  private touchOffsetX = 0;
+  private touchOffsetY = 0;
+  private canvasElement: HTMLCanvasElement | null = null;
 
   constructor(container: PIXI.Container, texture?: PIXI.Texture) {
     this.container = container;
+    
+    // 获取 canvas 元素
+    this.canvasElement = document.querySelector('canvas');
     
     // 创建拖尾效果（蓝色）
     this.particleTrail = new ParticleTrail(container, 0x00bfff, 15, 30, 2);
@@ -49,6 +59,9 @@ export class Player {
 
     // 设置键盘监听
     this.setupKeyboardControls();
+    
+    // 设置触摸监听
+    this.setupTouchControls();
   }
 
   /**
@@ -65,6 +78,78 @@ export class Player {
 
     window.addEventListener('keydown', this.keyDownHandler);
     window.addEventListener('keyup', this.keyUpHandler);
+  }
+
+  /**
+   * 设置触摸控制（移动端）
+   */
+  private setupTouchControls(): void {
+    this.touchStartHandler = (e: TouchEvent) => {
+      // 只在触摸 canvas 元素时处理
+      const target = e.target as HTMLElement;
+      if (target.tagName !== 'CANVAS') return;
+      
+      e.preventDefault(); // 只阻止 canvas 上的默认行为
+      const touch = e.touches[0];
+      if (!this.canvasElement) return;
+      
+      const rect = this.canvasElement.getBoundingClientRect();
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+      
+      // 计算触摸点与飞机的偏移量
+      this.touchOffsetX = touchX - this.sprite.x;
+      this.touchOffsetY = touchY - this.sprite.y;
+      
+      // 检查是否触摸到飞机附近（触摸范围扩大）
+      const dx = touchX - this.sprite.x;
+      const dy = touchY - this.sprite.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // 更宽松的触摸范围，便于操作
+      if (distance < 100) {
+        this.isTouching = true;
+      }
+    };
+
+    this.touchMoveHandler = (e: TouchEvent) => {
+      if (!this.isTouching) return;
+      
+      // 只在拖动飞机时阻止默认行为
+      e.preventDefault();
+      
+      const touch = e.touches[0];
+      if (!this.canvasElement) return;
+      
+      const rect = this.canvasElement.getBoundingClientRect();
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+      
+      // 更新飞机位置（减去偏移量，使飞机中心跟随手指）
+      this.sprite.x = touchX - this.touchOffsetX;
+      this.sprite.y = touchY - this.touchOffsetY;
+      
+      // 限制在屏幕内
+      const halfWidth = 20;
+      const halfHeight = 30;
+      const gameWidth = getGameWidth();
+      const gameHeight = getGameHeight();
+      
+      this.sprite.x = Math.max(halfWidth, Math.min(gameWidth - halfWidth, this.sprite.x));
+      this.sprite.y = Math.max(halfHeight, Math.min(gameHeight - halfHeight, this.sprite.y));
+    };
+
+    this.touchEndHandler = (e: TouchEvent) => {
+      if (this.isTouching) {
+        e.preventDefault();
+      }
+      this.isTouching = false;
+    };
+
+    // 在 window 上监听，但只处理 canvas 上的触摸
+    window.addEventListener('touchstart', this.touchStartHandler, { passive: false });
+    window.addEventListener('touchmove', this.touchMoveHandler, { passive: false });
+    window.addEventListener('touchend', this.touchEndHandler, { passive: false });
   }
 
   /**
@@ -125,6 +210,11 @@ export class Player {
     // 移除键盘监听
     window.removeEventListener('keydown', this.keyDownHandler);
     window.removeEventListener('keyup', this.keyUpHandler);
+    
+    // 移除触摸监听
+    window.removeEventListener('touchstart', this.touchStartHandler);
+    window.removeEventListener('touchmove', this.touchMoveHandler);
+    window.removeEventListener('touchend', this.touchEndHandler);
     
     this.sprite.destroy();
   }
